@@ -1,0 +1,58 @@
+Notes on Spanning Tree Protocol (STP) Assignment:
+(If I'm interested in reviewing this code in the future)
+
+Files: 
+5 x test topology files, 1 x topology structure, 1 x STPSwitch (parent class),
+Message.py (allows messaging between nodes through topology.py)
+run.py (PS C:\Users\Stephen\Desktop\SpanningTree> py -3.11 run.py SimpleLoopTopo),
+Switch.py - the only file that needed to be edited and main implementation file
+
+In Switch.py, 
+the class inherits idNum, and neighbors
+the class has attributes: root, distance (dist2root), activeLinks, and switchThrough
+root - what the node thinks is the root
+distance - distance from current node to the root
+activeLinks - the links that currently exist between nodes
+
+(biggest part of implementing STP is removing links from this collection)
+(when a link is removed, it directly affects the final topology tree/structure)
+Nodes stop sending signals when it is told that it is not used as a pathThrough (to the root).
+ - When the message is received that it is not a pathThrough (False val), 
+   the that node removes the message.origin (senderID) from its activeLinks.
+   This removes the connection from both ends.  
+
+Initial Topology - SimpleLoopTopo.py
+
+	 1 --- 2
+	 |     |
+	 |     |
+	 3 --- 4
+
+
+ex. Incorrect 			ex. Correct result
+1 - 2, 1 - 3			1 - 2, 1 - 3
+2 - 1, 2 - 4			2 - 1, 2 - 4
+3 - 1, 3 - 4			3 - 1
+4 - 2, 4 - 3			4 - 2
+
+
+Biggest issues that I faced:
+- Not knowing exactly what was happening in the algorithm, and not knowing what changes what
+
+How I fixed this:
+- Placing print statements right after an if, elif, else statement to see what runs
+- The print statements should identify the if condition/statement to make it easy to see what runs
+
+How I identified the problem:
+Initially the connection between 2 and 4 was cut, so I looked into what messages were being sent
+by printing them out. And I knew the answer involved severing the connection b/w 3 and 4.
+The message that 4 was sending to 3 had pathThrough as True which is wrong.
+I looked at the for loop for sending messages to neighbors, and it wasn't reseting passThrough
+to False each iteration. So I added a statement so passThrough can be False. 
+
+I should have started this assignment earlier, it takes time to debug.
+Reading through the requirements and rubric makes ti easier too. 
+
+
+
+
